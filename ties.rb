@@ -7,7 +7,7 @@ Shoes.app(:title=>'Ties: Rails Log Filter', :width=>800, :height=>620) do
     end
     stack(:width=>'67%') do 
       filename_field = edit_line(:width=>'98%') 
-      filename_field.text = '/Users/sam/Desktop/lpprodcopy.txt'
+      #filename_field.text = '/Users/sam/Desktop/lpprodcopy.txt'
       flow do 
         load_button = button("Load Log")
         load_button.click do
@@ -67,13 +67,13 @@ Shoes.app(:title=>'Ties: Rails Log Filter', :width=>800, :height=>620) do
       para "Controller:"
     end
     stack(:width=>'25%') do
-      controller_field = edit_line(:width=>'95%')
+      @controller_field = edit_line(:width=>'95%')
     end
     stack(:width=>'25%') do
       para "Action:"
     end
     stack(:width=>'25%') do
-      action_field = edit_line(:width=>'94%')
+      @action_field = edit_line(:width=>'94%')
     end
 
     stack { para strong "\nURL / Exception Info" }
@@ -81,7 +81,7 @@ Shoes.app(:title=>'Ties: Rails Log Filter', :width=>800, :height=>620) do
       para "URL Contains:"
     end
     stack(:width=>'25%') do
-      url_field = edit_line(:width=>'95%')
+      @url_field = edit_line(:width=>'95%')
     end
     stack(:width=>'25%') do
       para "Exception Present?"
@@ -134,13 +134,23 @@ Shoes.app(:title=>'Ties: Rails Log Filter', :width=>800, :height=>620) do
     #@results_form.show
     results = ""
     @log[@year_select.text][Date::MONTHNAMES.index(@month_select.text)][@day_select.text].each do |entry|
-      results += entry[:all_info].to_s + "\n\n"
+      results += entry[:all_info].to_s + "\n\n" if is_match?(entry)
     end
     #@results_field.text = results
     File.open(@save_filename_field.text, "w") do |file|
       file.write results
     end
     alert("File '#{@save_filename_field.text}' written.")
+  end
+  
+  
+  def is_match?(entry)
+    controller_match = @controller_field.text.to_s.length == 0 || entry[:controller].index(@controller_field.text)
+    action_match = @action_field.text.to_s.length == 0 || entry[:action].index(@action_field.text)
+    url_match = @url_field.text.to_s.length == 0 || entry[:url].index(@url_field.text)
+    exception_present_only = !@exception_present_checkbox.checked || (@exception_present_checkbox.checked && entry[:exception])
+    whatever_match = @whatever_field.text.to_s.length == 0 || entry[:all_info].index(@whatever_field.text)
+    return controller_match && action_match && url_match && exception_present_only && whatever_match
   end
   
   
