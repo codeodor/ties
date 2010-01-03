@@ -20,6 +20,8 @@ filename and click a button to filter the log entries you care to see.
 
 Ties takes a multi-megabyte Rails production log file and outputs only the entries you're interested in.
 
+Running Ties
+============
 To run Ties via source, you'll need [Shoes](http://github.com/shoes/shoes/downloads). Once installed,
 just run `shoes ties.rb`.  Otherwise, you can 
 [download the MacOS, Windows, or Linux executable binaries](http://github.com/codeodor/ties/downloads)
